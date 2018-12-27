@@ -15,10 +15,10 @@ function pasteImg(paramObj){
 
     //给文件赋予功能
     var fileAddEvent = function(e){
-        var fileType = e.target.result.split(';')[0];
 
+        var fileType = e.target.result.split(';')[0];
         var img = new Image();
-        img.id='imgid_'+Date.parse(new Date());
+        img.id='imgid_'+ Date.parse(new Date()) + sum(1,100000000);
         img.className = 'paste-img-class';
 
         if( fileType.indexOf('image') != -1 ){
@@ -62,12 +62,15 @@ function pasteImg(paramObj){
         e.preventDefault();
         receiveBox.className='';
         // console.log(e.dataTransfer.files[0]);
-        var f=e.dataTransfer.files[0];//获取到第一个上传的文件对象
-        var fr=new FileReader();//实例FileReader对象
-        fr.readAsDataURL(f);//把上传的文件对象转换成url
-        fr.onload=function (e){
-            fileAddEvent(e);
+        for( let i = 0, len=e.dataTransfer.files.length; i < len ; i++){
+            var f=e.dataTransfer.files[i];//获取到第一个上传的文件对象
+            var fr=new FileReader();//实例FileReader对象
+            fr.readAsDataURL(f);//把上传的文件对象转换成url
+            fr.onload=function (e){
+                fileAddEvent(e);
+            }
         }
+
     }
 
 
@@ -190,29 +193,96 @@ function pasteImg(paramObj){
     //提交信息
     $('#pasteImgUpbtn').on('click',function(){
 
+        //判断框内是否有文件
         if( $('#pasteImg img').length ){
             if( $('#pasteImg img').length > 1 ){
-                //多个文件的操作
-                console.log(1111);
+                //多个文件的操作(打包成压缩包)
+                for(let i = 0, len = $('#pasteImg img').length ; i < len ; i++ ){
+                    if( $('#pasteImg img').eq(i).attr('data-realtype') == 'file' ){
+                        alert('不能合并多个文件');
+                        return;
+                    }
+                }
+                
+                //多个图片的操作(合并成一张图片)
+                var imgsData =[];
+                var imgswArr = [];
+                var maxHeight = 0;
+                for( let i = 0, len = $('#pasteImg img').length; i< len ;i++){
+                    var img = new Image();
+                    img.src = $('#pasteImg img').eq(i).attr('data-realpath');
+                    img.onload = function(e){
+                        imgsData.push({
+                            width: this.width,
+                            height: this.height,
+                            src: this.src,
+                        });
+                        imgswArr.push(this.width);
+                        maxHeight+=this.height;
+                        //所有数据获取到的时候
+                        if( imgsData.length >= len ){
+                            getImgsData({
+                                maxWidth: max(imgswArr), //最大宽度
+                                maxHeight: maxHeight, //最长高度
+                                list: imgsData
+                            });
+                        }
+                    }
+                }
+
+                //获取图片信息来组合成一大张图
+                function getImgsData(res){
+                    console.log(res);
+                    var canvas = document.createElement('canvas');
+                    canvas.width = res.maxWidth + 40; //给图片预留 40 边距
+                    canvas.height = res.maxHeight + (res.list.length+1) * 20; //给每张图片预留 20边距
+                    var ctx = canvas.getContext('2d');
+                    ctx.rect(0 , 0 , canvas.width , canvas.height);
+                    ctx.fillStyle = "#fff";
+                    ctx.fill();
+
+                    var distance = 20;
+                    for(let i =0, len = res.list.length ; i < len ; i++ ){
+                        var img = new Image();
+                        //img.crossOrigin = 'Anonymous'; //解决跨域
+                        img.src = res.list[i].src;
+                        img.onload = function(e){
+                            //把图片画入到canvas中
+                            ctx.drawImage(this, 20, distance, res.list[i].width, res.list[i].height);
+                            distance+=res.list[i].height + 20 ;
+
+                            //图片都铺满的时候
+                            if( i >= len -1 ){
+                                var base64Realpath = canvas.toDataURL('image/jpeg');
+                                var base64Realtype = 'image';
+                                canvasComplete(base64Realpath, base64Realtype);
+                            }
+                        }
+                    }
+                }
             }else{
                 //一个文件的操作,获取第一个文件真实base64路径
                 var base64Realpath = $('#pasteImg img').eq(0).attr('data-realpath');
                 var base64Realtype = $('#pasteImg img').eq(0).attr('data-realtype');
+                canvasComplete(base64Realpath, base64Realtype);
             }
 
-            //回调函数
-            paramObj.saveCallback({
-                base64Realpath: base64Realpath, //真实路径
-                base64Realtype: base64Realtype, //真实文件类型 (image/file)
-                upfileIndex: maskParam.upfileIndex //上传框索引
-            });
-            //设置图片显示
-            $(paramObj.listClassName).eq(maskParam.upfileIndex).addClass('tvfileup-hasimg');
-            //还原设置
-            $('#pasteLoading').hide();
-            $('#pasteImg').html('');
-            $('.tvupfile-paste-prompt').show();
-            $('.tvupfile-paste-wrap').hide();
+            //canvas完成执行的函数
+            function canvasComplete(base64Realpath, base64Realtype){
+                //回调函数
+                paramObj.saveCallback({
+                    base64Realpath: base64Realpath, //真实路径
+                    base64Realtype: base64Realtype, //真实文件类型 (image/file)
+                    upfileIndex: maskParam.upfileIndex //上传框索引
+                });
+                //设置图片显示
+                $(paramObj.listClassName).eq(maskParam.upfileIndex).addClass('tvfileup-hasimg');
+                //还原设置
+                $('#pasteLoading').hide();
+                $('#pasteImg').html('');
+                $('.tvupfile-paste-prompt').show();
+                $('.tvupfile-paste-wrap').hide();
+            }
         }else{
             alert('框内至少要有一个文件！');
         }
@@ -304,4 +374,21 @@ function rmEdImgClass(){
             edImgClass[i].className = 'paste-img-class';
         }
     }
+}
+
+//随机数生成
+function sum (m,n){
+　  var num = Math.floor(Math.random()*(m - n) + n);
+    return num;
+}
+
+//获取数组中最大的值
+function max(arr){
+    var num = arr[0];
+    for(var i=0;i<arr.length;i++){
+        if(num < arr[i]){
+            num = arr[i]
+        }
+    }
+    return num;
 }
