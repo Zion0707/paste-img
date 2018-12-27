@@ -6,6 +6,7 @@
  *      @param listClassName //被触发的文件名(单个，或多个) * 
  *      @param paramList //页面参数列表
  *      @param saveCallback //完成的回调函数
+ *      @param saveMaxWidth //生成的图片最大宽度
  * }
  *  */ 
 function pasteImg(paramObj){
@@ -252,9 +253,21 @@ function pasteImg(paramObj){
 
                             //图片都铺满的时候
                             if( i >= len -1 ){
-                                var base64Realpath = canvas.toDataURL('image/jpeg');
                                 var base64Realtype = 'image';
-                                canvasComplete(base64Realpath, base64Realtype);
+                                var base64Realpath = canvas.toDataURL('image/jpeg');
+                                var img = new Image();
+                                img.src = base64Realpath;
+                                img.onload = function(){
+                                    //设置最大宽度，超过则等比例缩小，避免图片太大
+                                    if( this.width > paramObj.saveMaxWidth ){
+                                        var originalZoom = this.width/paramObj.saveMaxWidth; 
+                                        canvas.width = paramObj.saveMaxWidth;
+                                        canvas.height = this.height/originalZoom;
+                                        ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+                                        base64Realpath = canvas.toDataURL('image/jpeg');
+                                    }
+                                    canvasComplete(base64Realpath, base64Realtype);
+                                }
                             }
                         }
                     }
