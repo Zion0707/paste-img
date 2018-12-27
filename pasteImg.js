@@ -1,0 +1,293 @@
+/**
+ * 
+ * 截图/拖拽上传外设插件
+ * paramObj{
+ *      @param divName //截图放置框名称
+ *      @param paramList //页面参数列表
+ * }
+ *  */ 
+function pasteImg(paramObj){
+    
+    //收纳文件框
+    var receiveBox = document.querySelector(paramObj.divName);
+
+    //给文件赋予功能
+    var fileAddEvent = function(e){
+        var fileType = e.target.result.split(';')[0];
+
+        var img = new Image();
+        img.id='imgid_'+Date.parse(new Date());
+        img.className = 'paste-img-class';
+
+        if( fileType.indexOf('image') != -1 ){
+            //图片文件
+            img.src = e.target.result;
+            img.setAttribute('data-realtype', 'image');
+        }else{
+            //非图片文件
+            img.src = 'file_icon.png';
+            img.setAttribute('data-realtype', 'file');
+        }
+        //设置真实路径给提交
+        img.setAttribute('data-realpath', e.target.result);
+        receiveBox.appendChild( img );
+        //设置拖拽功能
+        pasteDrag('#'+img.id);
+        //去除文字提示
+        $('.tvupfile-paste-prompt').hide();
+    }
+
+    var imgReader = function( item ){
+        var blob = item.getAsFile(),
+        reader = new FileReader();
+        reader.onload = function( e ){
+            fileAddEvent(e);
+        };
+        reader.readAsDataURL( blob );
+    };
+    
+    
+    //文件拖拽功能
+    receiveBox.ondragover=function (e){
+        e.preventDefault();
+        receiveBox.className='inClass';
+    }
+    receiveBox.ondragleave=function(e){
+        e.preventDefault();
+        receiveBox.className='';
+    }
+    receiveBox.ondrop=function (e){
+        e.preventDefault();
+        receiveBox.className='';
+        // console.log(e.dataTransfer.files[0]);
+        var f=e.dataTransfer.files[0];//获取到第一个上传的文件对象
+        var fr=new FileReader();//实例FileReader对象
+        fr.readAsDataURL(f);//把上传的文件对象转换成url
+        fr.onload=function (e){
+            fileAddEvent(e);
+        }
+    }
+
+
+    //粘贴框触发粘贴事件
+    receiveBox.addEventListener('paste', function( e ){
+        //window.clipboardData.getData("Text") ie下获取黏贴的内容 e.clipboardData.getData("text/plain")火狐谷歌下获取黏贴的内容
+        //alert(e.clipboardData.getData("text/plain") )
+        var clipboardData = e.clipboardData,//谷歌
+            i = 0,
+            items, item, types;
+            console.log('0')
+
+        if( clipboardData ){
+            console.log('1')
+            items = clipboardData.items;
+            if( !items ){
+                console.log(2)
+                return;
+            }
+            console.log(3)
+            item = items[0];
+            types = clipboardData.types || [];
+            for( ; i < types.length; i++ ){
+                if( types[i] === 'Files' ){
+                    item = items[i];
+                    break;
+                }
+            }
+            if( item && item.kind === 'file' && item.type.match(/^image\//i) ){
+                imgReader( item );
+            }
+        }
+    },false);
+
+
+    //删除键触发去除聚焦的截图
+    document.onkeydown=function(e){
+        if( document.querySelector('.paste-img-out') ){ 
+            console.log(e.keyCode);
+            if( e && e.keyCode == 8 || e && e.keyCode == 46 ){ 
+                receiveBox.removeChild(document.querySelector('.paste-img-out'));
+                if($('#pasteImg img').length ==0){
+                    $('.tvupfile-paste-prompt').show();
+                }
+            }
+        }
+    }
+
+    //延时函数变量设定
+    var fileTimer = null;
+
+    //要上传的参数
+    var ajaxParam = {
+        fileName:'',//附件名称
+        paramList: paramObj.paramList,//参数列表
+    };
+
+    //动态设定白色框尺寸，来适应各个业务的上传框大小
+    $('.paste-area').css({
+        width: $('.tv-up-file').eq(0).width(),
+        height: $('.tv-up-file').eq(0).height()
+    });
+
+    //上传框被触发的时候
+    $('body').on('mouseover','.tv-up-file',function(){
+        //这里必须得有个文件标识，这样才能找到对应的图片
+        ajaxParam.fileName = $(this).find('.attachId').attr('name');
+        console.log(ajaxParam.fileName);
+        clearTimeout(fileTimer);        
+
+        $(this).addClass('paste-up');
+        var offsetLeft = $(this).offset().left -10;
+        var offsetTop = $(this).offset().top   -10;
+        $('.tvupfile-wrap').css({
+            left: offsetLeft,
+            top: offsetTop
+        }).show();
+    });
+    //离开上传输入框的时候
+    $('body').on('mouseout','.tv-up-file',function(){
+        $(this).removeClass('paste-up');
+        fileTimer = setTimeout(function(){
+            $('.tvupfile-wrap').hide();
+            clearTimeout(fileTimer);
+        },300);
+    });
+    //滚动条滚动的时候
+    $('body').scroll(function(){
+        if($('.paste-up').get(0)){
+            var offsetLeft = $('.paste-up').offset().left -10;
+            var offsetTop = $('.paste-up').offset().top   -10;
+            $('.tvupfile-wrap').css({
+                left: offsetLeft,
+                top: offsetTop
+            });
+        }
+    });
+
+    //白色外边框触发事件    
+    $('.tvupfile-wrap a').on('mouseover',function(){
+        clearTimeout(fileTimer);        
+    });
+    $('.tvupfile-wrap a').on('mouseout',function(){
+        clearTimeout(fileTimer);        
+        $('.tvupfile-wrap').hide();
+    }); 
+    
+
+    //触发弹框
+    $('#pasteBtn').on('click',function(){
+        $('.tvupfile-paste-wrap').fadeIn();
+        $('.tvupfile-paste-prompt').show();
+    });
+    //关闭弹窗
+    $('#pasteClose').on('click',function(){
+        $('.tvupfile-paste-wrap').fadeOut();
+        $('#pasteImg').html('');
+    });
+
+    //提交信息
+    $('#pasteImgUpbtn').on('click',function(){
+
+        //获取第一个文件真实base64路径
+        var firstBase64Realpath = $('#pasteImg img').eq(0).attr('data-realpath');
+        var firstBase64Realtype = $('#pasteImg img').eq(0).attr('data-realtype');
+
+        if( firstBase64Realpath ){
+            console.log( firstBase64Realpath );
+            //还原设置
+            $('#pasteLoading').hide();
+            $('#pasteImg').html('');
+            $('.tvupfile-paste-prompt').show();
+            $('.tvupfile-paste-wrap').hide();
+        }else{
+            alert('框内至少要有一个文件！');
+        }
+    });
+
+    //去除选中功能
+    $('.tvupfile-paste-wrap').on('click',function(){
+        rmEdImgClass();
+    });
+
+}
+
+
+
+//图片变大变小功能
+function pasteDrag(dragObj){
+    var dragObj = document.querySelector(dragObj);
+
+    //图片鼠标按下的时候
+    dragObj.onmousedown = function(e){
+           e = e||event;
+           var dir = "";  //设置好方向
+           var firstX = e.clientX;  //获取第一次点击的横坐标
+           var firstY = e.clientY;   //获取第一次点击的纵坐标
+           var width = dragObj.offsetWidth;  //获取到元素的宽度
+           var height = dragObj.offsetHeight;  //获取到元素的高度
+           var Left = dragObj.offsetLeft;   //获取到距离左边的距离
+           var Top = dragObj.offsetTop;   //获取到距离上边的距离
+           //下一步判断方向距离左边的距离+元素的宽度减去自己设定的宽度，只要点击的时候大于在这个区间，他就算右边
+           if(firstX>Left+width-30)
+           {
+               dir = "right";
+           }else if(firstX<Left+30)
+           {
+               dir = "left";
+           }
+           if(firstY>Top+height-30)
+           {
+               dir = "down";
+           }else if(firstY<Top+30)
+           {
+               dir = "top";
+           }
+           //判断方向结束
+           document.onmousemove = function(e){
+                //如果没有聚焦那么不予许缩放
+               if( dragObj.getAttribute('class').indexOf('paste-img-out') == -1 ) return;
+
+               e = e||event;
+               switch(dir)
+               {
+                   case "right":
+                         dragObj.style["width"] = width+(e.clientX-firstX)+"px";
+                        break;
+                   case "left":
+                       dragObj.style["width"] = width-(e.clientX-firstX)+"px";
+                       dragObj.style["left"] = Left+(e.clientX-firstX)+"px";
+                        break;
+                   case "top":
+                       dragObj.style["height"] = height-(e.clientY-firstY)+"px";
+                       dragObj.style["top"] = Top+(e.clientY-firstY)+"px";
+                       break;
+                   case "down":
+                       dragObj.style["height"] = height+(e.clientY-firstY)+"px";
+                       break;
+               }
+           }
+           dragObj.onmouseup = function(){
+               document.onmousemove = null;
+           }
+           return false;
+    }
+
+    //当前截图点击触发，点击就添加聚焦效果
+    dragObj.onclick = function(e){
+        e.stopPropagation();
+        rmEdImgClass();
+        this.className = 'paste-img-class paste-img-out';
+    }
+}
+
+
+//去除不相关的class
+function rmEdImgClass(){
+    //所有截图区域中的图片
+    var edImgClass = document.querySelectorAll('.paste-img-class');
+    if( edImgClass ){
+        for( var i = 0, len = edImgClass.length ; i < len ; i++ ){
+            edImgClass[i].className = 'paste-img-class';
+        }
+    }
+}

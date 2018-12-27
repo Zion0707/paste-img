@@ -1,0 +1,129 @@
+*{
+    padding:0;
+    margin:0;
+}
+
+
+
+.tvupfile-wrap{
+    box-shadow:0px 0px 1px #000;
+    /* width:148px; */
+    height:auto;
+    border:10px solid #fff;
+    position: fixed;
+    left:0;
+    top:0;
+    border-radius: 6px;    
+    overflow: hidden;
+    z-index: 1;
+    display:none;
+}
+.paste-area{
+    width:148px;
+    height:148px;
+}
+.paste-btn-wrap{
+    background-color:#fff;
+    padding-top:10px;
+}
+.tvupfile-wrap a{
+    display:block;
+    width:100%;
+    text-align: center;
+    height:30px;
+    line-height:30px;
+    color: #fff;
+    background-color: #20a0ff;
+    border-color: #20a0ff;
+    font-size: 12px;
+    border-radius: 4px;
+    transition-duration:0.2s;
+}
+.tvupfile-wrap a:hover{
+    background: #4db3ff;
+    border-color: #4db3ff;
+}
+.tvupfile-paste-wrap{
+    position: fixed;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    background-color: rgba(0,0,0,.5);
+    z-index:999;
+    overflow:auto;
+    display:none;
+    /* display:flex;
+    align-items:center;
+    justify-content: center; */
+}
+.tvupfile-paste-bounced{
+    margin:40px auto;
+    width:400px;
+    height:360px;
+    background-color:#fff;
+    padding:40px;
+    position: relative;
+}
+.tvupfile-paste-prompt{
+    position: absolute;
+    width:100%;
+    text-align: center;
+    left:0;
+    top:180px;
+    font-weight:bold;
+    color:#ddd;
+}
+#pasteImg{
+    position: relative;
+    z-index: 2;
+    border:2px solid #ddd;
+    height:300px;
+    overflow:auto;
+}
+#pasteImg.inClass,
+#pasteImg:hover{
+    /* border:2px solid #999; */
+    box-shadow: 0px 0px 4px #999;
+}
+.paste-img-out{
+    box-shadow:0px 0px 3px #006eed;
+    border:1px solid #006eed;
+}
+#pasteImg img{
+    margin:20px;
+    width:342px;
+}
+.tvupfile-close{
+    width:30px;
+    height:30px;
+    line-height:28px;
+    position: absolute;
+    right:0;
+    top:0;
+    background-color: #ddd;
+    text-align: center;
+    cursor: pointer;
+}
+.tvupfile-close:hover{
+    color:#999;
+}
+#pasteImgUpbtn{
+    width:100%;
+    text-align: center;
+    height: 50px;
+    line-height:50px;
+    display: block;
+    margin-top:20px;
+    color: #fff;
+    background-color: #f7ba2a;
+    border-color: #f7ba2a;
+    transition-duration:0.2s;
+}
+#pasteImgUpbtn:hover{
+    background: #f9c855;
+    border-color: #f9c855;
+}
+#pasteLoading{
+    display:none;
+}

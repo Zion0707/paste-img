@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+<style>
+
+/* 模拟业务现状 */
+.tv-up-list{
+    margin:100px;
+}
+.tv-up-file{
+    font-size:20px;
+    text-align: center;
+    line-height:148px;
+    border:1px solid #ddd;
+    background-color:orangered;
+    border-radius: 6px;
+    box-sizing: border-box;
+    width: 148px;
+    height: 148px;
+    line-height: 148px;
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+    z-index: 2;
+    float: left;
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+    <div class="tv-up-list">
+        <div class="tv-up-file">+
+            <div style="display:none;">
+                <input type="file" class="upload" style="display: none;">
+                <div class="tv-up-img tv-up-box-size tv-pa" style="z-index:1;">
+                    <img :src="returnPath( truckLoanLenderAuditDetails.borrowerRiskQuery4TvThumb )" width="100%" height="100%">
+                </div>
+                <div class="tv-up-btn tv-up-box-size tv-pa change" style="z-index:2;">
+                    <a class="el-icon-plus"></a>
+                </div>
+                <div class="tv-up-tool tv-up-box-size tv-pa" style="z-index:3;">
+                    <a class="el-icon-view" title="借款人被失信信息tv查询" :data-href="truckLoanLenderAuditDetails.borrowerRiskQuery4TvUrl" @click="handlePictureCardPreview"></a>
+                    <a class="el-icon-edit change" title="编辑"></a>
+                </div>
+                <div class="tv-up-loading tv-up-box-size tv-pa" style="z-index:4;">
+                    <span class="el-icon-loading"></span>
+                </div>
+                <input type="hidden" name="borrowerRiskQuery4Tv" class="attachId">
+            </div>
+        </div>
+        <div class="tv-up-file">+
+            <div style="display:none;">
+                <input type="file" class="upload" style="display: none;">
+                <div class="tv-up-img tv-up-box-size tv-pa" style="z-index:1;">
+                    <img :src="returnPath( truckLoanLenderAuditDetails.carRentalBlacklistQueryTvThumb )" width="100%" height="100%">
+                </div>
+                <div class="tv-up-btn tv-up-box-size tv-pa change" style="z-index:2;">
+                    <a class="el-icon-plus"></a>
+                </div>
+                <div class="tv-up-tool tv-up-box-size tv-pa" style="z-index:3;">
+                    <a class="el-icon-view" title="借款人被失信信息tv查询" :data-href="truckLoanLenderAuditDetails.carRentalBlacklistQueryTvUrl" @click="handlePictureCardPreview"></a>
+                    <a class="el-icon-edit change" title="编辑"></a>
+                </div>
+                <div class="tv-up-loading tv-up-box-size tv-pa" style="z-index:4;">
+                    <span class="el-icon-loading"></span>
+                </div>
+                <input type="hidden" name="carRentalBlacklistQueryTv" class="attachId">
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    
+
+
+
+
+
+    <!-- 截图上传插件开始 -->
+    <div id="paste">
+        <div class="el-loading-mask" id="pasteLoading">
+            <div class="el-loading-spinner">
+                <svg viewBox="25 25 50 50" class="circular">
+                    <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
+                </svg>
+                <p class="el-loading-text">正在提交...</p>
+            </div>
+        </div><!--pasteLoading-->
+    
+        <div class="tvupfile-wrap">
+            <div class="paste-area"></div>
+            <div class="paste-btn-wrap">
+                <a href="javascript:;" id="pasteBtn">截图/拖拽</a>
+            </div>
+        </div><!--tvupfile-wrap-->
+    
+        <div class="tvupfile-paste-wrap">
+            <div class="tvupfile-paste-bounced">
+                <div class="tvupfile-paste-prompt">请将"截图粘贴"或"文件拖拽"到该区域</div>
+                <div class="tvupfile-close" id="pasteClose">x</div>
+                <div id="pasteImg"></div>
+                <a href="javascript:;" id="pasteImgUpbtn">保存提交</a>
+            </div>
+        </div><!--tvupfile-paste-wrap-->
+    </div>
+    <!-- 截图上传插件结束 -->
+
+</div>
+<script src="jquery.min.js"></script>
+<script src="pasteImg.js"></script>
+<script>
+$(function(){
+
+    //插件调用
+    pasteImg({
+        divName:'#pasteImg'
+    });
+    
+});
+</script>
+</body>
+</html>
