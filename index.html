@@ -29,7 +29,19 @@
     z-index: 2;
     float: left;
 }
-
+.tvfileup-hasimg .tvupfile-div1{
+    width:100%;
+    height:100%;
+    display:none;
+}
+.tvupfile-div2{
+    width:100%;
+    height:100%;
+}
+.tvupfile-div2 img{
+    width:100%;
+    height:100%;
+}
 </style>
 </head>
 <body>
@@ -37,42 +49,16 @@
 
 
     <div class="tv-up-list">
-        <div class="tv-up-file">+
-            <div style="display:none;">
-                <input type="file" class="upload" style="display: none;">
-                <div class="tv-up-img tv-up-box-size tv-pa" style="z-index:1;">
-                    <img :src="returnPath( truckLoanLenderAuditDetails.borrowerRiskQuery4TvThumb )" width="100%" height="100%">
-                </div>
-                <div class="tv-up-btn tv-up-box-size tv-pa change" style="z-index:2;">
-                    <a class="el-icon-plus"></a>
-                </div>
-                <div class="tv-up-tool tv-up-box-size tv-pa" style="z-index:3;">
-                    <a class="el-icon-view" title="借款人被失信信息tv查询" :data-href="truckLoanLenderAuditDetails.borrowerRiskQuery4TvUrl" @click="handlePictureCardPreview"></a>
-                    <a class="el-icon-edit change" title="编辑"></a>
-                </div>
-                <div class="tv-up-loading tv-up-box-size tv-pa" style="z-index:4;">
-                    <span class="el-icon-loading"></span>
-                </div>
-                <input type="hidden" name="borrowerRiskQuery4Tv" class="attachId">
+        <div class="tv-up-file">
+            <div class="tvupfile-div1">+</div>
+            <div class="tvupfile-div2">
+                <img src="">
             </div>
         </div>
-        <div class="tv-up-file">+
-            <div style="display:none;">
-                <input type="file" class="upload" style="display: none;">
-                <div class="tv-up-img tv-up-box-size tv-pa" style="z-index:1;">
-                    <img :src="returnPath( truckLoanLenderAuditDetails.carRentalBlacklistQueryTvThumb )" width="100%" height="100%">
-                </div>
-                <div class="tv-up-btn tv-up-box-size tv-pa change" style="z-index:2;">
-                    <a class="el-icon-plus"></a>
-                </div>
-                <div class="tv-up-tool tv-up-box-size tv-pa" style="z-index:3;">
-                    <a class="el-icon-view" title="借款人被失信信息tv查询" :data-href="truckLoanLenderAuditDetails.carRentalBlacklistQueryTvUrl" @click="handlePictureCardPreview"></a>
-                    <a class="el-icon-edit change" title="编辑"></a>
-                </div>
-                <div class="tv-up-loading tv-up-box-size tv-pa" style="z-index:4;">
-                    <span class="el-icon-loading"></span>
-                </div>
-                <input type="hidden" name="carRentalBlacklistQueryTv" class="attachId">
+        <div class="tv-up-file">
+            <div class="tvupfile-div1">+</div>
+            <div class="tvupfile-div2">
+                <img src="">
             </div>
         </div>
     </div>
@@ -125,7 +111,18 @@ $(function(){
 
     //插件调用
     pasteImg({
-        divName:'#pasteImg'
+        divName:'#pasteImg',
+        listClassName:'.tv-up-file',
+        paramList:{},
+        saveCallback:function(res){
+            console.log(res);
+            //分图片和文件两种来对应显示图标
+            if(res.base64Realtype == 'image'){
+                $('.tv-up-file').eq(res.upfileIndex).find('.tvupfile-div2 img').attr('src', res.base64Realpath).attr('data-realpath',res.base64Realpath);
+            }else{
+                $('.tv-up-file').eq(res.upfileIndex).find('.tvupfile-div2 img').attr('src', 'file_icon.png').attr('data-realpath',res.base64Realpath);
+            }
+        }
     });
     
 });

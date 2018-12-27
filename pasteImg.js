@@ -3,7 +3,9 @@
  * 截图/拖拽上传外设插件
  * paramObj{
  *      @param divName //截图放置框名称
+ *      @param listClassName //被触发的文件名(单个，或多个) * 
  *      @param paramList //页面参数列表
+ *      @param saveCallback //完成的回调函数
  * }
  *  */ 
 function pasteImg(paramObj){
@@ -118,24 +120,24 @@ function pasteImg(paramObj){
     var fileTimer = null;
 
     //要上传的参数
-    var ajaxParam = {
-        fileName:'',//附件名称
+    var maskParam = {
+        upfileIndex:'',//触发的文件索引
         paramList: paramObj.paramList,//参数列表
     };
 
     //动态设定白色框尺寸，来适应各个业务的上传框大小
     $('.paste-area').css({
-        width: $('.tv-up-file').eq(0).width(),
-        height: $('.tv-up-file').eq(0).height()
+        width: $(paramObj.listClassName).eq(0).width(),
+        height: $(paramObj.listClassName).eq(0).height()
     });
 
     //上传框被触发的时候
-    $('body').on('mouseover','.tv-up-file',function(){
+    $('body').on('mouseover',paramObj.listClassName,function(){
         //这里必须得有个文件标识，这样才能找到对应的图片
-        ajaxParam.fileName = $(this).find('.attachId').attr('name');
-        console.log(ajaxParam.fileName);
-        clearTimeout(fileTimer);        
+        maskParam.upfileIndex = $(this).index();
+        console.log('上传的文件索引', maskParam.upfileIndex);
 
+        clearTimeout(fileTimer);        
         $(this).addClass('paste-up');
         var offsetLeft = $(this).offset().left -10;
         var offsetTop = $(this).offset().top   -10;
@@ -145,7 +147,7 @@ function pasteImg(paramObj){
         }).show();
     });
     //离开上传输入框的时候
-    $('body').on('mouseout','.tv-up-file',function(){
+    $('body').on('mouseout',paramObj.listClassName,function(){
         $(this).removeClass('paste-up');
         fileTimer = setTimeout(function(){
             $('.tvupfile-wrap').hide();
@@ -188,12 +190,24 @@ function pasteImg(paramObj){
     //提交信息
     $('#pasteImgUpbtn').on('click',function(){
 
-        //获取第一个文件真实base64路径
-        var firstBase64Realpath = $('#pasteImg img').eq(0).attr('data-realpath');
-        var firstBase64Realtype = $('#pasteImg img').eq(0).attr('data-realtype');
+        if( $('#pasteImg img').length ){
+            if( $('#pasteImg img').length > 1 ){
+                //多个文件的操作
+                console.log(1111);
+            }else{
+                //一个文件的操作,获取第一个文件真实base64路径
+                var base64Realpath = $('#pasteImg img').eq(0).attr('data-realpath');
+                var base64Realtype = $('#pasteImg img').eq(0).attr('data-realtype');
+            }
 
-        if( firstBase64Realpath ){
-            console.log( firstBase64Realpath );
+            //回调函数
+            paramObj.saveCallback({
+                base64Realpath: base64Realpath, //真实路径
+                base64Realtype: base64Realtype, //真实文件类型 (image/file)
+                upfileIndex: maskParam.upfileIndex //上传框索引
+            });
+            //设置图片显示
+            $(paramObj.listClassName).eq(maskParam.upfileIndex).addClass('tvfileup-hasimg');
             //还原设置
             $('#pasteLoading').hide();
             $('#pasteImg').html('');
