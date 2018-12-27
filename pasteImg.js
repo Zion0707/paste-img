@@ -70,7 +70,6 @@ function pasteImg(paramObj){
                 fileAddEvent(e);
             }
         }
-
     }
 
 
