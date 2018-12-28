@@ -153,7 +153,7 @@ function pasteImg(paramObj){
     $('body').on('mouseover',paramObj.listClassName,function(){
         //这里必须得有个文件标识，这样才能找到对应的图片
         maskParam.upfileIndex = $(this).index();
-        console.log('上传的文件索引', maskParam.upfileIndex);
+        // console.log('上传的文件索引', maskParam.upfileIndex);
 
         clearTimeout(fileTimer);        
         $(this).addClass('paste-up');
