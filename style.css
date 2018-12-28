@@ -52,7 +52,7 @@
     background-color: rgba(0,0,0,.5);
     z-index:999;
     overflow:auto;
-    /* display:none; */
+    display:none;
     /* display:flex;
     align-items:center;
     justify-content: center; */
@@ -124,6 +124,7 @@
     background: #f9c855;
     border-color: #f9c855;
 }
-#pasteLoading{
+#pasteLoading,
+#pasteUpFile{
     display:none;
 }

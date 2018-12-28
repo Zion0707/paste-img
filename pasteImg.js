@@ -4,6 +4,7 @@
  * paramObj{
  *      @param divName //截图放置框名称
  *      @param listClassName //被触发的文件名(单个，或多个) * 
+ *      @param simulationFileInput //模拟需要被触发上传的按钮 
  *      @param paramList //页面参数列表
  *      @param saveCallback //完成的回调函数
  *      @param saveMaxWidth //生成的图片最大宽度
@@ -64,7 +65,7 @@ function pasteImg(paramObj){
         receiveBox.className='';
         // console.log(e.dataTransfer.files[0]);
         for( let i = 0, len=e.dataTransfer.files.length; i < len ; i++){
-            var f=e.dataTransfer.files[i];//获取到第一个上传的文件对象
+            var f=e.dataTransfer.files[i];
             var fr=new FileReader();//实例FileReader对象
             fr.readAsDataURL(f);//把上传的文件对象转换成url
             fr.onload=function (e){
@@ -192,7 +193,6 @@ function pasteImg(paramObj){
         $('.tvupfile-wrap').hide();
     }); 
     
-
     //触发弹框
     $('#pasteBtn').on('click',function(){
         $('.tvupfile-paste-wrap').fadeIn();
@@ -204,9 +204,27 @@ function pasteImg(paramObj){
         $('#pasteImg').html('');
     });
 
+    //上传点击(+)按钮
+    $(paramObj.simulationFileInput).on('click',function(){
+        $('#pasteUpFile').click();
+    });
+    //隐藏的file被触发事件
+    $('#pasteUpFile').on('change',function(e){
+        if( e.target.files.length ){
+            for( let i = 0, len=e.target.files.length; i < len ; i++){
+                var f=e.target.files[i];
+                var fr=new FileReader();//实例FileReader对象
+                fr.readAsDataURL(f);//把上传的文件对象转换成url
+                fr.onload=function (e){
+                    fileAddEvent(e);
+                }
+            }
+            $('.tvupfile-paste-wrap').fadeIn();
+        }
+    });
+
     //提交信息
     $('#pasteImgUpbtn').on('click',function(){
-
         //判断框内是否有文件
         if( $('#pasteImg img').length ){
             if( $('#pasteImg img').length > 1 ){
