@@ -76,7 +76,7 @@
                 <img src="">
             </div>
             <div class="tvupfile-div3">
-                <a href="javascript:;">预览</a>
+                <a href="javascript:;" class="preview">预览</a>
                 <a href="javascript:;" class="change">修改</a>
             </div>
         </div>
@@ -86,7 +86,7 @@
                 <img src="">
             </div>
             <div class="tvupfile-div3">
-                <a href="javascript:;">预览</a>
+                <a href="javascript:;" class="preview">预览</a>
                 <a href="javascript:;" class="change">修改</a>
             </div>
         </div>
@@ -152,12 +152,11 @@ $(function(){
         },
         saveCallback:function(res){
             console.log('loaded..', res);
-            //分图片和文件两种来对应显示图标
-            if(res.base64Realtype == 'image'){
-                $('.tv-up-file').eq(res.upfileIndex).find('.tvupfile-div2 img').attr('src', res.base64Realpath).attr('data-realpath',res.base64Realpath);
-            }else{
-                $('.tv-up-file').eq(res.upfileIndex).find('.tvupfile-div2 img').attr('src', 'file_icon.png').attr('data-realpath',res.base64Realpath);
-            }
+            //根据自己的需求来进行内容显示
+            var fileType = ( res.base64Realtype == 'image' ? res.base64Realpath : 'file_icon.png' );
+            $('.tv-up-file').eq(res.upfileIndex).find('.tvupfile-div2 img').attr('src', fileType).attr('data-realpath',res.base64Realpath);
+            $('.tv-up-file').eq(res.upfileIndex).find('.preview').attr('data-realpath',res.base64Realpath);
+
         }
     });
     
