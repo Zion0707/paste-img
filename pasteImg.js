@@ -108,15 +108,29 @@ function pasteImg(paramObj){
 
     //删除键触发去除聚焦的截图
     document.onkeydown=function(e){
-        if( document.querySelector('.paste-img-out') ){ 
-            console.log(e.keyCode);
-            if( e && e.keyCode == 8 || e && e.keyCode == 46 ){ 
-                receiveBox.removeChild(document.querySelector('.paste-img-out'));
+
+        //如果有选中的文件情况下才能进行按键处理
+        if( $('.paste-img-out').get(0) ){ 
+            var keyCode = e.keyCode || e.which || e.charCode;
+            var ctrlKey = e.ctrlKey || e.metaKey;
+            
+            //删除当前选中的图片
+            if( keyCode == 8 || keyCode == 46 ){ 
+                receiveBox.removeChild( $('.paste-img-out')[0] );
                 if($('#pasteImg img').length ==0){
                     $('.tvupfile-paste-prompt').show();
                 }
             }
+            //ctrl + c 复制
+            if( ctrlKey && keyCode == 67 ){
+                
+            }
+            //ctrl + c 粘贴
+            if( ctrlKey && keyCode == 86 ){
+                
+            }
         }
+        
     }
 
     //延时函数变量设定
