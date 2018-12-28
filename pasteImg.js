@@ -206,7 +206,7 @@ function pasteImg(paramObj){
 
     //上传点击(+)按钮
     $(paramObj.simulationFileInput).on('click',function(){
-        $('#pasteUpFile').click();
+        $('#pasteUpFile').val('').click();
     });
     //隐藏的file被触发事件
     $('#pasteUpFile').on('change',function(e){
