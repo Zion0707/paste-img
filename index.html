@@ -112,7 +112,7 @@
                 <svg viewBox="25 25 50 50" class="circular">
                     <circle cx="50" cy="50" r="20" fill="none" class="path"></circle>
                 </svg>
-                <p class="el-loading-text">正在提交...</p>
+                <p class="el-loading-text">正在提交，请稍后...</p>
             </div>
         </div><!--pasteLoading-->
     
@@ -148,9 +148,11 @@ $(function(){
         saveMaxWidth:2000,
         beforeSaveCallback:function(){
             console.log('loading..');
+            $('#pasteLoading').show();
         },
         saveCallback:function(res){
             console.log('loaded..', res);
+            $('#pasteLoading').hide();
             //根据自己的需求来进行内容显示
             var fileType = ( res.base64Realtype == 'image' ? res.base64Realpath : 'file_icon.png' );
             $('.tv-up-file').eq(res.upfileIndex).find('.tvupfile-div2 img').attr('src', fileType).attr('data-realpath',res.base64Realpath);
