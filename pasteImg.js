@@ -6,6 +6,7 @@
  *      @param listClassName //被触发的文件名(单个，或多个) * 
  *      @param simulationFileInput //模拟需要被触发上传的按钮 
  *      @param paramList //页面参数列表
+ *      @param beforeSaveCallback //上传前回调函数
  *      @param saveCallback //完成的回调函数
  *      @param saveMaxWidth //生成的图片最大宽度
  * }
@@ -227,6 +228,9 @@ function pasteImg(paramObj){
     $('#pasteImgUpbtn').on('click',function(){
         //判断框内是否有文件
         if( $('#pasteImg img').length ){
+            //上传前调用函数
+            paramObj.beforeSaveCallback();
+
             if( $('#pasteImg img').length > 1 ){
                 //多个文件的操作(打包成压缩包)
                 for(let i = 0, len = $('#pasteImg img').length ; i < len ; i++ ){
@@ -264,7 +268,7 @@ function pasteImg(paramObj){
 
                 //获取图片信息来组合成一大张图
                 function getImgsData(res){
-                    console.log(res);
+                    // console.log(res);
                     var canvas = document.createElement('canvas');
                     canvas.width = res.maxWidth + 40; //给图片预留 40 边距
                     canvas.height = res.maxHeight + (res.list.length+1) * 20; //给每张图片预留 20边距

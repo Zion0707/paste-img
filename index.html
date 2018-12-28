@@ -147,8 +147,11 @@ $(function(){
         simulationFileInput:'.tvupfile-div1, .change',
         saveMaxWidth:1500,
         paramList:{},
+        beforeSaveCallback:function(){
+            console.log('loading..');
+        },
         saveCallback:function(res){
-            console.log(res);
+            console.log('loaded..', res);
             //分图片和文件两种来对应显示图标
             if(res.base64Realtype == 'image'){
                 $('.tv-up-file').eq(res.upfileIndex).find('.tvupfile-div2 img').attr('src', res.base64Realpath).attr('data-realpath',res.base64Realpath);
