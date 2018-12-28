@@ -2,13 +2,12 @@
  * 
  * 截图/拖拽上传外设插件
  * paramObj{
- *      @param divName //截图放置框名称
- *      @param listClassName //被触发的文件名(单个，或多个) * 
- *      @param simulationFileInput //模拟需要被触发上传的按钮 
- *      @param paramList //页面参数列表
+ *      @param divName //截图放置框名称（必填）
+ *      @param listClassName //被触发的文件名(单个，或多个)（必填）
+ *      @param simulationFileInput //模拟需要被触发上传的按钮 （必填）
+ *      @param saveMaxWidth //多张图片生成一张图片的最大宽度
  *      @param beforeSaveCallback //上传前回调函数
- *      @param saveCallback //完成的回调函数
- *      @param saveMaxWidth //生成的图片最大宽度
+ *      @param saveCallback //base64文件生成的回调函数
  * }
  *  */ 
 function pasteImg(paramObj){
@@ -138,12 +137,8 @@ function pasteImg(paramObj){
     //延时函数变量设定
     var fileTimer = null;
 
-    //要上传的参数
-    var maskParam = {
-        upfileIndex:'',//触发的文件索引
-        paramList: paramObj.paramList,//参数列表
-    };
-
+    //触发的文件参数
+    var upfileIndex = 0;
     //动态设定白色框尺寸，来适应各个业务的上传框大小
     $('.paste-area').css({
         width: $(paramObj.listClassName).eq(0).width(),
@@ -153,8 +148,8 @@ function pasteImg(paramObj){
     //上传框被触发的时候
     $('body').on('mouseover',paramObj.listClassName,function(){
         //这里必须得有个文件标识，这样才能找到对应的图片
-        maskParam.upfileIndex = $(this).index();
-        // console.log('上传的文件索引', maskParam.upfileIndex);
+        upfileIndex = $(this).index();
+        // console.log('上传的文件索引', upfileIndex);
 
         clearTimeout(fileTimer);        
         $(this).addClass('paste-up');
@@ -295,9 +290,10 @@ function pasteImg(paramObj){
                                 img.src = base64Realpath;
                                 img.onload = function(){
                                     //设置最大宽度，超过则等比例缩小，避免图片太大
-                                    if( this.width > paramObj.saveMaxWidth ){
-                                        var originalZoom = this.width/paramObj.saveMaxWidth; 
-                                        canvas.width = paramObj.saveMaxWidth;
+                                    var maxw = paramObj.saveMaxWidth || 1500;
+                                    if( this.width > maxw ){
+                                        var originalZoom = this.width/maxw; 
+                                        canvas.width = maxw;
                                         canvas.height = this.height/originalZoom;
                                         ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
                                         base64Realpath = canvas.toDataURL('image/jpeg');
@@ -321,10 +317,10 @@ function pasteImg(paramObj){
                 paramObj.saveCallback({
                     base64Realpath: base64Realpath, //真实路径
                     base64Realtype: base64Realtype, //真实文件类型 (image/file)
-                    upfileIndex: maskParam.upfileIndex //上传框索引
+                    upfileIndex: upfileIndex //上传框索引
                 });
                 //设置图片显示
-                $(paramObj.listClassName).eq(maskParam.upfileIndex).addClass('tvfileup-hasimg');
+                $(paramObj.listClassName).eq(upfileIndex).addClass('tvfileup-hasimg');
                 //还原设置
                 $('#pasteLoading').hide();
                 $('#pasteImg').html('');

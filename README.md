@@ -7,12 +7,11 @@
 ```
  * 插件可选参数
  * paramObj{
- *      @param divName //截图放置框名称
- *      @param listClassName //被触发的文件名(单个，或多个) * 
- *      @param simulationFileInput //模拟需要被触发上传的按钮 
- *      @param paramList //页面参数列表
+ *      @param divName //截图放置框名称（必填）
+ *      @param listClassName //被触发的文件名(单个，或多个)（必填）
+ *      @param simulationFileInput //模拟需要被触发上传的按钮 （必填）
+ *      @param saveMaxWidth //多张图片生成一张图片的最大宽度
  *      @param beforeSaveCallback //上传前回调函数
- *      @param saveCallback //完成的回调函数
- *      @param saveMaxWidth //生成的图片最大宽度
+ *      @param saveCallback //base64文件生成的回调函数
  * }
 ```
