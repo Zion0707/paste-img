@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
 <style>
 
-/* 模拟业务现状 */
+/* 模拟业务状况样式 start */
 .tv-up-list{
     margin:100px;
 }
@@ -34,10 +34,14 @@
     height:100%;
     display:none;
 }
+.tvfileup-hasimg:hover .tvupfile-div3{
+    display:block;
+}
 .tvupfile-div1{
     cursor: pointer;
 }
-.tvupfile-div2{
+.tvupfile-div2,
+.tvupfile-div3{
     width:100%;
     height:100%;
 }
@@ -45,26 +49,49 @@
     width:100%;
     height:100%;
 }
+.tvupfile-div3{
+    position: absolute;
+    left:0;
+    top:0;
+    font-size:12px;
+    display:none;
+    background-color: rgba(0, 0, 0, .5);
+}
+.tvupfile-div3 a{
+    color:#fff;
+    margin:0 5px;
+}
+/* 模拟业务状况样式 end */
 </style>
 </head>
 <body>
 <div class="wrap">
 
 
+    <!-- 模拟业务状况布局 start -->
     <div class="tv-up-list">
         <div class="tv-up-file">
             <div class="tvupfile-div1">+</div>
             <div class="tvupfile-div2">
                 <img src="">
             </div>
+            <div class="tvupfile-div3">
+                <a href="javascript:;">预览</a>
+                <a href="javascript:;" class="change">修改</a>
+            </div>
         </div>
         <div class="tv-up-file">
             <div class="tvupfile-div1">+</div>
             <div class="tvupfile-div2">
                 <img src="">
             </div>
+            <div class="tvupfile-div3">
+                <a href="javascript:;">预览</a>
+                <a href="javascript:;" class="change">修改</a>
+            </div>
         </div>
     </div>
+    <!-- 模拟业务状况布局 end -->
 
 
 
@@ -117,7 +144,7 @@ $(function(){
     pasteImg({
         divName:'#pasteImg',
         listClassName:'.tv-up-file',
-        simulationFileInput:'.tvupfile-div1',
+        simulationFileInput:'.tvupfile-div1, .change',
         saveMaxWidth:1500,
         paramList:{},
         saveCallback:function(res){
