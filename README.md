@@ -15,4 +15,4 @@
  *      @param saveCallback //base64文件生成的回调函数
  * }
 ```
-访问地址  https://zion0707.github.io/pasteImg/
+访问地址  https://zion0707.github.io/paste-img/
